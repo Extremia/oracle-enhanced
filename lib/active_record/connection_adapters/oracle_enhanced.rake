@@ -19,9 +19,9 @@ end
 if defined?(create_database) == 'method'
   def create_database_with_oracle_enhanced(config)
     if config['adapter'] == 'oracle_enhanced'
-      print "Please provide the SYSTEM password for your oracle installation\n>"
-      system_password = $stdin.gets.strip
-      ActiveRecord::Base.establish_connection(config.merge('username' => 'SYSTEM', 'password' => system_password))
+      system_username= config['system_username'] || 'SYSTEM'
+      system_password = config['system_password'] || [(print "Please provide the SYSTEM password for your oracle installation\n>"),$stdin.gets.strip][1]
+      ActiveRecord::Base.establish_connection(config.merge('username' => system_username, 'password' => system_password))
       begin
         ActiveRecord::Base.connection.execute "CREATE USER #{config['username']} IDENTIFIED BY #{config['password']}"
       rescue => e
